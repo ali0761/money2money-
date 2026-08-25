@@ -3,7 +3,7 @@ let coinsData = [];
 let detailChartInstance = null;
 let currentDetailCoinId = null;
 
-const coinIds = "bitcoin,ethereum,solana,ripple,cardano,dogecoin,polkadot,matic-network,shiba-inu,chainlink,avalanche-2";
+const coinIds = "bitcoin,ethereum,solana,ripple,cardano,dogecoin,pepe,matic-network,shiba-inu,chainlink";
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchDashboardData();
@@ -170,6 +170,7 @@ function openDetail(coinId) {
     document.getElementById('stat-circ').textContent = formatNumber(coin.circulating_supply);
     document.getElementById('stat-total').textContent = formatNumber(coin.total_supply);
 
+    switchTab('overview');
     // Initial chart load (7 days)
     fetchDetailChart('7');
 }
@@ -261,4 +262,52 @@ function renderBigChart(pricesArray, coinId) {
             interaction: { mode: 'nearest', axis: 'x', intersect: false }
         }
     });
+}
+
+// Tab Logic
+function switchTab(tabId) {
+    // UI Update
+    document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    
+    // Content Update
+    document.getElementById('content-overview').style.display = 'none';
+    document.getElementById('content-markets').style.display = 'none';
+    
+    document.getElementById('content-' + tabId).style.display = 'block';
+    
+    // Fetch data if needed
+    if (tabId === 'markets') {
+        fetchMarketsData();
+    }
+}
+
+async function fetchMarketsData() {
+    const tbody = document.getElementById('markets-table-body');
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--text-muted);">Piyasa verileri yükleniyor...</td></tr>';
+    
+    if (!currentDetailCoinId) return;
+    
+    try {
+        const res = await fetch(`https://api.coingecko.com/api/v3/coins/${currentDetailCoinId}/tickers`);
+        const json = await res.json();
+        
+        const tickers = json.tickers.slice(0, 10); // Top 10 exchanges
+        
+        tbody.innerHTML = '';
+        tickers.forEach(t => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="font-weight: 600;">${t.market.name}</td>
+                <td><span class="coin-symbol">${t.base}/${t.target}</span></td>
+                <td>${formatCurrency(t.converted_last.usd)}</td>
+                <td>${formatCurrency(t.converted_volume.usd)}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+        
+    } catch (e) {
+        console.error(e);
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--danger);">Veri yüklenemedi. (Rate Limit)</td></tr>';
+    }
 }

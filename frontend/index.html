@@ -93,12 +93,13 @@
             <div>
                 <!-- Tabs -->
                 <div style="display: flex; gap: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
-                    <span style="cursor: pointer; color: var(--accent); font-weight: bold; border-bottom: 2px solid var(--accent); padding-bottom: 1rem; margin-bottom: -1rem;">Genel Bakış</span>
-                    <span style="cursor: pointer; color: var(--text-muted); font-weight: 500;">Piyasalar</span>
-                    <span style="cursor: pointer; color: var(--text-muted); font-weight: 500;">Haberler</span>
+                    <span id="tab-overview" class="detail-tab active" onclick="switchTab('overview')">Genel Bakış</span>
+                    <span id="tab-markets" class="detail-tab" onclick="switchTab('markets')">Piyasalar</span>
                 </div>
                 
-                <!-- Chart Filters -->
+                <!-- Overview Content -->
+                <div id="content-overview">
+                    <!-- Chart Filters -->
                 <div style="display: flex; justify-content: flex-end; gap: 0.25rem; margin-bottom: 1.5rem;" id="chart-time-filters">
                     <button class="time-btn" onclick="fetchDetailChart('1')">24sa</button>
                     <button class="time-btn active" onclick="fetchDetailChart('7')">7g</button>
@@ -110,6 +111,26 @@
                 <div style="height: 450px; width: 100%; position: relative;">
                     <div id="chart-loading" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--text-muted);">Grafik yükleniyor...</div>
                     <canvas id="detail-main-chart"></canvas>
+                </div>
+                </div> <!-- End Overview Content -->
+                
+                <!-- Markets Content -->
+                <div id="content-markets" style="display: none;">
+                    <div class="coin-table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Borsa</th>
+                                    <th>Parite</th>
+                                    <th>Fiyat (USD)</th>
+                                    <th>Hacim (USD)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="markets-table-body">
+                                <tr><td colspan="4" style="text-align:center; color: var(--text-muted);">Piyasa verileri yükleniyor...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
