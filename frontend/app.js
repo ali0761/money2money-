@@ -1,5 +1,5 @@
-const API_URL = "YOUR_API_GATEWAY_URL_HERE"; 
-// TODO: Replace this with the actual AWS API Gateway URL after deployment.
+const API_URL = "https://po80ugrsea.execute-api.us-east-1.amazonaws.com/Prod/data"; 
+// Endpoint successfully connected to AWS Serverless API
 
 let chartInstance = null;
 
