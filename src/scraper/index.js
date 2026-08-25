@@ -15,7 +15,7 @@ exports.handler = async (event) => {
         
         const url = 'https://api.coingecko.com/api/v3/simple/price';
         const params = {
-            ids: 'bitcoin,ethereum',
+            ids: 'bitcoin,ethereum,solana,ripple,cardano,dogecoin', // Added new coins
             vs_currencies: 'usd',
             include_last_updated_at: 'true'
         };
@@ -34,14 +34,11 @@ exports.handler = async (event) => {
         // Format to ISO 8601 string for sort key
         const timestamp = new Date().toISOString();
 
-        // Save Bitcoin
-        if (data.bitcoin) {
-            await saveToDynamoDB('bitcoin', data.bitcoin.usd, timestamp);
-        }
-        
-        // Save Ethereum
-        if (data.ethereum) {
-            await saveToDynamoDB('ethereum', data.ethereum.usd, timestamp);
+        // Loop through all fetched coins and save them to DynamoDB
+        for (const [coin, details] of Object.entries(data)) {
+            if (details && details.usd) {
+                await saveToDynamoDB(coin, details.usd, timestamp);
+            }
         }
 
         console.log("Scrape and save completed successfully.");

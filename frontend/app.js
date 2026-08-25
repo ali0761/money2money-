@@ -37,7 +37,7 @@ async function fetchData(coin) {
         
         if (json.data && json.data.length > 0) {
             renderChart(coin, json.data);
-            statusMsg.textContent = "Data loaded successfully (Last 24h).";
+            statusMsg.textContent = "";
         } else {
             statusMsg.textContent = "No data found for this coin yet.";
         }
@@ -66,8 +66,8 @@ function renderChart(coin, dataItems) {
     }
 
     const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.5)');
-    gradient.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+    gradient.addColorStop(0, 'rgba(34, 197, 94, 0.5)'); // Green gradient start
+    gradient.addColorStop(1, 'rgba(34, 197, 94, 0.0)'); // Green gradient end
 
     chartInstance = new Chart(ctx, {
         type: 'line',
@@ -76,12 +76,12 @@ function renderChart(coin, dataItems) {
             datasets: [{
                 label: `${coin.toUpperCase()} Price (USD)`,
                 data: prices,
-                borderColor: '#3b82f6',
+                borderColor: '#22c55e', // Green line
                 backgroundColor: gradient,
                 borderWidth: 3,
                 fill: true,
                 tension: 0.4,
-                pointRadius: 0,
+                pointRadius: 4, // Changed from 0 to 4 to show dots
                 pointHitRadius: 20
             }]
         },
