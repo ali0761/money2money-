@@ -1,0 +1,82 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Serverless Crypto Dashboard Infrastructure
+
+Globals:
+  Function:
+    Timeout: 15
+    Runtime: nodejs18.x
+    Architectures:
+      - x86_64
+    MemorySize: 256
+
+Parameters:
+  CoinGeckoApiKey:
+    Type: String
+    Description: API key for CoinGecko
+    Default: ""
+
+Resources:
+  # 1. DynamoDB Table (Pay Per Request = Free Tier friendly)
+  CryptoPricesTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: CryptoPrices
+      AttributeDefinitions: 
+        - AttributeName: coin_id
+          AttributeType: S
+        - AttributeName: timestamp
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: coin_id
+          KeyType: HASH
+        - AttributeName: timestamp
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+
+  # 2. Scraper Lambda Function (Triggered every hour)
+  ScraperFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/scraper/
+      Handler: index.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref CryptoPricesTable
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref CryptoPricesTable
+          COINGECKO_API_KEY: !Ref CoinGeckoApiKey
+      Events:
+        HourlyScrape:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 hour)
+            Name: HourlyCryptoScrapeSchedule
+
+  # 3. API Lambda Function (Exposed via API Gateway)
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/api/
+      Handler: index.handler
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref CryptoPricesTable
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref CryptoPricesTable
+      Events:
+        GetCryptoData:
+          Type: Api
+          Properties:
+            Path: /data
+            Method: get
+
+Outputs:
+  ApiEndpoint:
+    Description: "API Gateway endpoint URL (Paste this into app.js)"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/data"

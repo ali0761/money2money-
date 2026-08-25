@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money2Money</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Money2Money 🚀</h1>
+            <p>Powered by AWS Serverless (Lambda, DynamoDB, API Gateway)</p>
+        </header>
+
+        <div class="controls">
+            <select id="coinSelect">
+                <option value="bitcoin">Bitcoin (BTC)</option>
+                <option value="ethereum">Ethereum (ETH)</option>
+            </select>
+            <button id="refreshBtn">Refresh Data</button>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="cryptoChart"></canvas>
+        </div>
+        
+        <div id="statusMessage">Loading data...</div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
