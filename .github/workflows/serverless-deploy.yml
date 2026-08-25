@@ -45,4 +45,5 @@ jobs:
           --stack-name money2money-stack 
           --capabilities CAPABILITY_IAM 
           --resolve-s3 
+          --no-fail-on-empty-changeset 
           --parameter-overrides CoinGeckoApiKey=${{ secrets.COINGECKO_API_KEY }}
