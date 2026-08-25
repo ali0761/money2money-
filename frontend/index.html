@@ -4,34 +4,115 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Money2Money</title>
-    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Money2Money</h1>
-            <p>Powered by AWS Serverless (Lambda, DynamoDB, API Gateway)</p>
-        </header>
 
-        <div class="controls">
-            <select id="coinSelect">
-                <option value="bitcoin">Bitcoin (BTC)</option>
-                <option value="ethereum">Ethereum (ETH)</option>
-                <option value="solana">Solana (SOL)</option>
-                <option value="ripple">Ripple (XRP)</option>
-                <option value="cardano">Cardano (ADA)</option>
-                <option value="dogecoin">Dogecoin (DOGE)</option>
-            </select>
-            <button id="refreshBtn">Refresh Data</button>
+    <nav>
+        <h1 onclick="goBack()">Money2Money</h1>
+    </nav>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboard-view" class="container">
+        <div class="section-title">Öne Çıkanlar</div>
+        
+        <div class="dashboard-grid" id="top-cards-container">
+            <div style="color: var(--text-muted);">Yükleniyor...</div>
         </div>
 
-        <div class="chart-container">
-            <canvas id="cryptoChart"></canvas>
+        <div class="section-title">Tüm Piyasalar</div>
+        
+        <div class="coin-table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Coin Adı</th>
+                        <th>Fiyat</th>
+                        <th>24s Değişim</th>
+                        <th>Piyasa Değeri</th>
+                        <th>Grafik (7g)</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <tr><td colspan="6" style="text-align:center; color: var(--text-muted);">Yükleniyor...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- DETAIL VIEW (Initially Hidden) -->
+    <div id="detail-view" class="container" style="display: none;">
+        <!-- Breadcrumb / Back -->
+        <div style="cursor: pointer; color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem;" onclick="goBack()">
+            &larr; <span style="margin: 0 0.5rem;">Kripto Paralar</span> > <span id="detail-breadcrumb" style="color: var(--text-main); margin-left: 0.5rem;">...</span>
         </div>
         
-        <div id="statusMessage">Loading data...</div>
+        <div id="detail-grid" style="display: grid; grid-template-columns: 320px 1fr; gap: 2.5rem;">
+            <!-- Left Sidebar (Stats) -->
+            <div>
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                    <img id="detail-icon" src="" style="width: 48px; height: 48px; border-radius: 50%;" alt="icon">
+                    <div>
+                        <h2 id="detail-name" style="margin: 0; font-size: 1.8rem; display: flex; align-items: center; gap: 0.5rem;">Yükleniyor... <span id="detail-rank" style="background: #1f2937; font-size: 0.8rem; padding: 2px 6px; border-radius: 4px; color: var(--text-muted);">#0</span></h2>
+                        <span id="detail-symbol" class="coin-symbol">...</span>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h1 id="detail-price" style="margin: 0; font-size: 2.8rem; letter-spacing: -1px;">$0.00</h1>
+                    <div id="detail-change" class="price-change positive" style="font-size: 1.1rem; margin-top: 0.5rem;">0.00% (24s)</div>
+                </div>
+                
+                <button style="width: 100%; padding: 0.8rem; background: transparent; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; font-weight: bold; margin-bottom: 2rem; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#1f2937'" onmouseout="this.style.background='transparent'">
+                    ☆ Portföye Ekle
+                </button>
+                
+                <div style="display: flex; flex-direction: column;">
+                    <div class="stat-row">
+                        <span class="stat-label">Piyasa Değeri</span>
+                        <span class="stat-value" id="stat-mcap">...</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">24 Saatlik Hacim</span>
+                        <span class="stat-value" id="stat-vol">...</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Dolaşım Arzı</span>
+                        <span class="stat-value" id="stat-circ">...</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Toplam Arz</span>
+                        <span class="stat-value" id="stat-total">...</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Main (Chart) -->
+            <div>
+                <!-- Tabs -->
+                <div style="display: flex; gap: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                    <span style="cursor: pointer; color: var(--accent); font-weight: bold; border-bottom: 2px solid var(--accent); padding-bottom: 1rem; margin-bottom: -1rem;">Genel Bakış</span>
+                    <span style="cursor: pointer; color: var(--text-muted); font-weight: 500;">Piyasalar</span>
+                    <span style="cursor: pointer; color: var(--text-muted); font-weight: 500;">Haberler</span>
+                </div>
+                
+                <!-- Chart Filters -->
+                <div style="display: flex; justify-content: flex-end; gap: 0.25rem; margin-bottom: 1.5rem;" id="chart-time-filters">
+                    <button class="time-btn" onclick="fetchDetailChart('1')">24sa</button>
+                    <button class="time-btn active" onclick="fetchDetailChart('7')">7g</button>
+                    <button class="time-btn" onclick="fetchDetailChart('30')">1 Ay</button>
+                    <button class="time-btn" onclick="fetchDetailChart('365')">1 Yıl</button>
+                    <button class="time-btn" onclick="fetchDetailChart('max')">Maks</button>
+                </div>
+                
+                <div style="height: 450px; width: 100%; position: relative;">
+                    <div id="chart-loading" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--text-muted);">Grafik yükleniyor...</div>
+                    <canvas id="detail-main-chart"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="app.js"></script>
