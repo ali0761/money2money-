@@ -47,3 +47,12 @@ jobs:
           --resolve-s3 
           --no-fail-on-empty-changeset 
           --parameter-overrides CoinGeckoApiKey=${{ secrets.COINGECKO_API_KEY }}
+
+      - name: S3'e Frontend Dosyalarini Yukle (Sync)
+        run: |
+          # 1. AWS'den rastgele olusturulan kova (bucket) adini ogren
+          BUCKET_NAME=$(aws cloudformation describe-stack-resource --stack-name money2money-stack --logical-resource-id FrontendBucket --query 'StackResourceDetail.PhysicalResourceId' --output text)
+          
+          # 2. Frontend klasorundeki her seyi o kovaya senkronize et (yukle)
+          echo "Dosyalar bu kovaya yukleniyor: $BUCKET_NAME"
+          aws s3 sync ./frontend s3://$BUCKET_NAME/ --delete

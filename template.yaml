@@ -76,7 +76,36 @@ Resources:
             Path: /data
             Method: get
 
+  # 4. S3 Bucket for Frontend Hosting (Sitemizi barindracak Kova)
+  FrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: index.html
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+  # 5. S3 Bucket Policy (Kovadaki dosyalari herkese acik hale getiren izin belgesi)
+  FrontendBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref FrontendBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action: "s3:GetObject"
+            Resource: !Sub "${FrontendBucket.Arn}/*"
+
 Outputs:
   ApiEndpoint:
     Description: "API Gateway endpoint URL (Paste this into app.js)"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/data"
+  WebsiteURL:
+    Description: "AWS S3 Uzerinde Calisan Canli Web Sitesi Linkimiz"
+    Value: !GetAtt FrontendBucket.WebsiteURL
