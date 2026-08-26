@@ -316,7 +316,7 @@ async function fetchMarketsData() {
 // --- PORTFOLIO SYSTEM ---
 
 // LUTFEN AWS GITHUB ACTIONS CIKTISINDAKI API LINKI ILE BURAYI GUNCELLEYIN
-const API_BASE_URL = "BURAYA_API_LINKI_GELECEK"; 
+const API_BASE_URL = "https://po80ugrsea.execute-api.us-east-1.amazonaws.com/Prod"; 
 
 function getUserId() {
     let uid = localStorage.getItem('money2money_uid');
