@@ -415,8 +415,8 @@ function logout() {
     
     // Matrix Yagmurunu Baslat
     document.querySelectorAll('.coin-rain').forEach(el => el.remove());
-    const symbols = ['₿', 'Ξ', '🐕', '✕', '₳', '$', 'SOL', 'PEPE', '0', '1'];
-    for (let i = 0; i < 30; i++) {
+    const symbols = ['₿', 'Ξ', '🐕', '✕', '₳', 'SOL', 'PEPE', 'MATIC', 'AVAX', 'DOT', 'LINK', 'BNB', 'USDT', 'SHIB', 'TRX'];
+    for (let i = 0; i < 35; i++) {
         const drop = document.createElement('div');
         drop.className = 'coin-rain';
         drop.textContent = symbols[Math.floor(Math.random() * symbols.length)];
@@ -462,11 +462,37 @@ async function submitAuth(action) {
         const data = await res.json();
         
         if (res.ok) {
-            loggedInUser = data.username;
-            localStorage.setItem('m2m_user', loggedInUser);
             document.getElementById('auth-modal').style.display = 'none';
-            updateNav();
-            alert("İşlem başarılı!");
+            const overlay = document.getElementById('login-overlay');
+            overlay.style.display = 'flex';
+            overlay.style.opacity = '1';
+
+            // Coin Yagmurunu Baslat
+            document.querySelectorAll('.binary-rain').forEach(el => el.remove());
+            const symbols = ['₿', 'Ξ', '🐕', '✕', '₳', 'SOL', 'PEPE', 'MATIC', 'AVAX', 'DOT', 'LINK', 'BNB', 'USDT', 'SHIB', 'TRX'];
+            for (let i = 0; i < 40; i++) {
+                const drop = document.createElement('div');
+                drop.className = 'binary-rain';
+                drop.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                drop.style.left = Math.random() * 100 + 'vw';
+                drop.style.animationDuration = (Math.random() * 2 + 1) + 's';
+                drop.style.animationDelay = (Math.random() * 0.5) + 's';
+                drop.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+                overlay.appendChild(drop);
+            }
+            
+            setTimeout(() => {
+                loggedInUser = data.username;
+                localStorage.setItem('m2m_user', loggedInUser);
+                updateNav();
+                
+                overlay.style.transition = 'opacity 0.5s ease';
+                overlay.style.opacity = '0';
+                
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 500);
+            }, 2500); // 2.5 saniye izle
         } else {
             alert(data.error || "Bir hata oluştu.");
         }

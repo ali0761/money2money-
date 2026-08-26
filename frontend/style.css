@@ -139,7 +139,18 @@ nav h1 {
     top: -10vh;
     color: rgba(34, 197, 94, 0.4);
     font-weight: bold;
-    animation: coinDrop linear forwards;
+    animation: coinDrop linear infinite;
+    z-index: 9998;
+    user-select: none;
+}
+
+.binary-rain {
+    position: absolute;
+    top: -10vh;
+    color: rgba(34, 197, 94, 0.8);
+    font-family: monospace;
+    font-weight: bold;
+    animation: coinDrop linear infinite;
     z-index: 9998;
     user-select: none;
 }
