@@ -318,16 +318,86 @@ async function fetchMarketsData() {
 // LUTFEN AWS GITHUB ACTIONS CIKTISINDAKI API LINKI ILE BURAYI GUNCELLEYIN
 const API_BASE_URL = "https://po80ugrsea.execute-api.us-east-1.amazonaws.com/Prod"; 
 
-function getUserId() {
-    let uid = localStorage.getItem('money2money_uid');
-    if (!uid) {
-        uid = 'user_' + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem('money2money_uid', uid);
+let loggedInUser = localStorage.getItem('m2m_user') || null;
+
+function updateNav() {
+    const authBtn = document.getElementById('auth-btn');
+    const portBtn = document.getElementById('portfolio-btn');
+    const outBtn = document.getElementById('logout-btn');
+    const greet = document.getElementById('user-greeting');
+    if (!authBtn) return; // if DOM not ready
+    if (loggedInUser) {
+        authBtn.style.display = 'none';
+        portBtn.style.display = 'inline-block';
+        outBtn.style.display = 'inline-block';
+        greet.style.display = 'inline-block';
+        greet.textContent = 'Merhaba, ' + loggedInUser;
+    } else {
+        authBtn.style.display = 'inline-block';
+        portBtn.style.display = 'none';
+        outBtn.style.display = 'none';
+        greet.style.display = 'none';
     }
-    return uid;
+}
+setTimeout(updateNav, 100);
+
+function getUserId() {
+    return loggedInUser;
+}
+
+function checkAuth() {
+    if (!loggedInUser) {
+        document.getElementById('auth-modal').style.display = 'flex';
+        return false;
+    }
+    return true;
+}
+
+function logout() {
+    loggedInUser = null;
+    localStorage.removeItem('m2m_user');
+    updateNav();
+    goHome();
+}
+
+async function submitAuth(action) {
+    const user = document.getElementById('auth-username').value;
+    const pass = document.getElementById('auth-password').value;
+    
+    if(!user || !pass) {
+        alert("Lütfen kullanıcı adı ve şifre girin.");
+        return;
+    }
+    
+    try {
+        const res = await fetch(`${API_BASE_URL}/auth`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: action, username: user, password: pass })
+        });
+        const data = await res.json();
+        
+        if (res.ok) {
+            loggedInUser = data.username;
+            localStorage.setItem('m2m_user', loggedInUser);
+            document.getElementById('auth-modal').style.display = 'none';
+            updateNav();
+            alert("İşlem başarılı!");
+        } else {
+            alert(data.error || "Bir hata oluştu.");
+        }
+    } catch (e) {
+        alert("Bağlantı hatası!");
+        console.error(e);
+    }
+}
+
+function openAuthModal() {
+    document.getElementById('auth-modal').style.display = 'flex';
 }
 
 async function promptPortfolio() {
+    if (!checkAuth()) return;
     if (!currentDetailCoinId) return;
     const amount = prompt(`Kaç adet ${currentDetailCoinId.toUpperCase()} varlığınız var? (Sıfırlamak için 0 yazın)`);
     if (amount === null || isNaN(amount) || amount === "") return;

@@ -118,6 +118,43 @@ Resources:
             Path: /portfolio
             Method: options
 
+  # 8. Users Table for Auth
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Users
+      AttributeDefinitions:
+        - AttributeName: username
+          AttributeType: S
+      KeySchema:
+        - AttributeName: username
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+  # 9. Auth API Function
+  AuthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/auth/
+      Handler: index.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UsersTable
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref UsersTable
+      Events:
+        PostAuth:
+          Type: Api
+          Properties:
+            Path: /auth
+            Method: post
+        OptionsAuth:
+          Type: Api
+          Properties:
+            Path: /auth
+            Method: options
+
   # 4. S3 Bucket for Frontend Hosting (Sitemizi barindracak Kova)
   FrontendBucket:
     Type: AWS::S3::Bucket

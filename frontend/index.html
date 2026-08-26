@@ -9,9 +9,14 @@
 </head>
 <body>
 
-    <nav style="justify-content: space-between;">
-        <h1 onclick="goHome()">Money2Money</h1>
-        <button style="background: transparent; color: var(--text-main); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold;" onclick="openPortfolio()">Cüzdanım</button>
+    <nav style="justify-content: space-between; align-items: center;">
+        <h1 onclick="goHome()" style="cursor: pointer;">Money2Money</h1>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <span id="user-greeting" style="display: none; color: var(--accent); font-weight: bold;"></span>
+            <button id="auth-btn" style="background: transparent; color: var(--text-main); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold;" onclick="openAuthModal()">Giriş Yap</button>
+            <button id="portfolio-btn" style="display: none; background: transparent; color: var(--text-main); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold;" onclick="openPortfolio()">Cüzdanım</button>
+            <button id="logout-btn" style="display: none; background: transparent; color: #ef4444; border: 1px solid #ef4444; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold;" onclick="logout()">Çıkış Yap</button>
+        </div>
     </nav>
 
     <!-- DASHBOARD VIEW -->
@@ -165,6 +170,20 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- AUTH MODAL -->
+    <div id="auth-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 2rem; border-radius: 12px; width: 300px; text-align: center;">
+            <h2 style="margin-top: 0;">Giriş Yap / Kayıt Ol</h2>
+            <input type="text" id="auth-username" placeholder="Kullanıcı Adı" style="width: 100%; padding: 0.8rem; margin-bottom: 1rem; background: #1f2937; border: 1px solid var(--border-color); color: white; border-radius: 6px; box-sizing: border-box;">
+            <input type="password" id="auth-password" placeholder="Şifre" style="width: 100%; padding: 0.8rem; margin-bottom: 1.5rem; background: #1f2937; border: 1px solid var(--border-color); color: white; border-radius: 6px; box-sizing: border-box;">
+            
+            <button onclick="submitAuth('login')" style="width: 100%; padding: 0.8rem; background: var(--accent); color: black; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 0.5rem;">Giriş Yap</button>
+            <button onclick="submitAuth('register')" style="width: 100%; padding: 0.8rem; background: transparent; color: var(--text-main); border: 1px solid var(--border-color); border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 1rem;">Kayıt Ol</button>
+            
+            <span style="color: var(--text-muted); cursor: pointer; font-size: 0.9rem;" onclick="document.getElementById('auth-modal').style.display='none'">İptal</span>
         </div>
     </div>
 
