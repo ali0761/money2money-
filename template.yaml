@@ -76,6 +76,43 @@ Resources:
             Path: /data
             Method: get
 
+  # 6. User Portfolios Table
+  UserPortfoliosTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: UserPortfolios
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+  # 7. Portfolio API Function
+  PortfolioFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/portfolio/
+      Handler: index.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UserPortfoliosTable
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref UserPortfoliosTable
+      Events:
+        GetPortfolio:
+          Type: Api
+          Properties:
+            Path: /portfolio
+            Method: get
+        PostPortfolio:
+          Type: Api
+          Properties:
+            Path: /portfolio
+            Method: post
+
   # 4. S3 Bucket for Frontend Hosting (Sitemizi barindracak Kova)
   FrontendBucket:
     Type: AWS::S3::Bucket

@@ -136,8 +136,9 @@ function createMiniChart(canvasId, data, color, isTable) {
 }
 
 // Detail View
-function goBack() {
+function goHome() {
     document.getElementById('detail-view').style.display = 'none';
+    document.getElementById('portfolio-view').style.display = 'none';
     document.getElementById('dashboard-view').style.display = 'block';
     currentDetailCoinId = null;
 }
@@ -309,5 +310,96 @@ async function fetchMarketsData() {
     } catch (e) {
         console.error(e);
         tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--danger);">Veri yüklenemedi. (Rate Limit)</td></tr>';
+    }
+}
+
+// --- PORTFOLIO SYSTEM ---
+
+// LUTFEN AWS GITHUB ACTIONS CIKTISINDAKI API LINKI ILE BURAYI GUNCELLEYIN
+const API_BASE_URL = "BURAYA_API_LINKI_GELECEK"; 
+
+function getUserId() {
+    let uid = localStorage.getItem('money2money_uid');
+    if (!uid) {
+        uid = 'user_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('money2money_uid', uid);
+    }
+    return uid;
+}
+
+async function promptPortfolio() {
+    if (!currentDetailCoinId) return;
+    const amount = prompt(`Kaç adet ${currentDetailCoinId.toUpperCase()} varlığınız var? (Sıfırlamak için 0 yazın)`);
+    if (amount === null || isNaN(amount) || amount === "") return;
+    
+    try {
+        const res = await fetch(`${API_BASE_URL}/portfolio`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userId: getUserId(),
+                coinId: currentDetailCoinId,
+                amount: parseFloat(amount)
+            })
+        });
+        if(res.ok) {
+            alert("Portföyünüz başarıyla güncellendi!");
+        } else {
+            alert("Hata oluştu. API linkini güncellediğinizden emin olun.");
+        }
+    } catch(e) {
+        alert("Bağlantı hatası: API Linkini (API_BASE_URL) ayarladınız mı?");
+    }
+}
+
+async function openPortfolio() {
+    document.getElementById('dashboard-view').style.display = 'none';
+    document.getElementById('detail-view').style.display = 'none';
+    document.getElementById('portfolio-view').style.display = 'block';
+    
+    const tbody = document.getElementById('portfolio-table-body');
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--text-muted);">Portföy yükleniyor...</td></tr>';
+    document.getElementById('portfolio-total-balance').textContent = "Hesaplanıyor...";
+    
+    try {
+        const res = await fetch(`${API_BASE_URL}/portfolio?userId=${getUserId()}`);
+        if (!res.ok) throw new Error("API Error");
+        const data = await res.json();
+        
+        const assets = data.assets || {};
+        const assetKeys = Object.keys(assets);
+        
+        if (assetKeys.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--text-muted);">Portföyünüz boş. Detay sayfasından coin ekleyin.</td></tr>';
+            document.getElementById('portfolio-total-balance').textContent = "$0.00";
+            return;
+        }
+        
+        let totalUsd = 0;
+        tbody.innerHTML = '';
+        
+        for (const coinId of assetKeys) {
+            const amount = assets[coinId];
+            const coinData = coinsData.find(c => c.id === coinId);
+            const price = coinData ? coinData.current_price : 0; 
+            const value = amount * price;
+            totalUsd += value;
+            
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="font-weight: 600; text-transform: capitalize;">${coinId}</td>
+                <td>${amount}</td>
+                <td>${formatCurrency(price)}</td>
+                <td style="color: var(--accent); font-weight: bold;">${formatCurrency(value)}</td>
+            `;
+            tbody.appendChild(tr);
+        }
+        
+        document.getElementById('portfolio-total-balance').textContent = formatCurrency(totalUsd);
+        
+    } catch (e) {
+        console.error(e);
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--danger);">Bağlantı hatası. app.js dosyasındaki API_BASE_URL linkini güncellediniz mi?</td></tr>';
+        document.getElementById('portfolio-total-balance').textContent = "$0.00";
     }
 }

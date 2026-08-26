@@ -9,8 +9,9 @@
 </head>
 <body>
 
-    <nav>
-        <h1 onclick="goBack()">Money2Money</h1>
+    <nav style="justify-content: space-between;">
+        <h1 onclick="goHome()">Money2Money</h1>
+        <button style="background: transparent; color: var(--text-main); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold;" onclick="openPortfolio()">💼 Cüzdanım</button>
     </nav>
 
     <!-- DASHBOARD VIEW -->
@@ -42,10 +43,36 @@
         </div>
     </div>
 
+    <!-- PORTFOLIO VIEW -->
+    <div id="portfolio-view" class="container" style="display: none;">
+        <div class="section-title">💼 Cüzdanım</div>
+        
+        <div style="background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; text-align: center;">
+            <p style="color: var(--text-muted); margin: 0 0 0.5rem 0;">Toplam Bakiye</p>
+            <h1 id="portfolio-total-balance" style="margin: 0; font-size: 3rem; color: var(--accent);">$0.00</h1>
+        </div>
+
+        <div class="coin-table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Varlık</th>
+                        <th>Miktar</th>
+                        <th>Güncel Fiyat</th>
+                        <th>Toplam Değer</th>
+                    </tr>
+                </thead>
+                <tbody id="portfolio-table-body">
+                    <tr><td colspan="4" style="text-align:center; color: var(--text-muted);">Yükleniyor...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <!-- DETAIL VIEW (Initially Hidden) -->
     <div id="detail-view" class="container" style="display: none;">
         <!-- Breadcrumb / Back -->
-        <div style="cursor: pointer; color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem;" onclick="goBack()">
+        <div style="cursor: pointer; color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem;" onclick="goHome()">
             &larr; <span style="margin: 0 0.5rem;">Kripto Paralar</span> > <span id="detail-breadcrumb" style="color: var(--text-main); margin-left: 0.5rem;">...</span>
         </div>
         
@@ -65,8 +92,8 @@
                     <div id="detail-change" class="price-change positive" style="font-size: 1.1rem; margin-top: 0.5rem;">0.00% (24s)</div>
                 </div>
                 
-                <button style="width: 100%; padding: 0.8rem; background: transparent; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; font-weight: bold; margin-bottom: 2rem; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#1f2937'" onmouseout="this.style.background='transparent'">
-                    ☆ Portföye Ekle
+                <button id="add-to-portfolio-btn" onclick="promptPortfolio()" style="width: 100%; padding: 0.8rem; background: transparent; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; font-weight: bold; margin-bottom: 2rem; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#1f2937'" onmouseout="this.style.background='transparent'">
+                    ☆ Portföye Ekle / Düzenle
                 </button>
                 
                 <div style="display: flex; flex-direction: column;">
