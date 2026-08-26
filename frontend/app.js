@@ -107,7 +107,7 @@ function renderDashboard() {
         const arrow = isPositive ? '▲' : '▼';
         const chartColor = isPositive ? 'rgba(34, 197, 94, 1)' : 'rgba(239, 68, 68, 1)';
         
-        if (index < 4) {
+        if (index < 3) {
             // Render Card
             const card = document.createElement('div');
             card.className = 'coin-card';
