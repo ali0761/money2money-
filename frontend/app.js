@@ -3,7 +3,7 @@ let coinsData = [];
 let detailChartInstance = null;
 let currentDetailCoinId = null;
 
-const coinIds = "bitcoin,ethereum,solana,ripple,cardano,dogecoin,pepe,matic-network,shiba-inu,chainlink";
+const coinIds = "bitcoin,ethereum,solana,ripple,cardano,dogecoin,pepe,shiba-inu,chainlink,ethena,cyberconnect,arkham,hamster-kombat,notcoin,catizen";
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchDashboardData();
@@ -32,9 +32,64 @@ async function fetchDashboardData() {
         coinsData = await res.json();
         
         renderDashboard();
+        renderMarketOverview();
     } catch (e) {
         console.error(e);
-        document.getElementById('top-cards-container').innerHTML = '<div style="color:var(--danger)">Veri yüklenemedi. Çok fazla istek atılmış olabilir (Rate limit). Biraz bekleyip sayfayı yenileyin.</div>';
+        document.getElementById('top-cards-container').innerHTML = '<div style="color:var(--danger)">Veri yüklenemedi. (Rate limit). Biraz bekleyip sayfayı yenileyin.</div>';
+    }
+}
+
+async function renderMarketOverview() {
+    // 1. Top Gainer / Loser
+    if (coinsData && coinsData.length > 0) {
+        let gainer = coinsData[0];
+        let loser = coinsData[0];
+        
+        for(const coin of coinsData) {
+            const change = coin.price_change_percentage_24h || 0;
+            if (change > (gainer.price_change_percentage_24h || 0)) gainer = coin;
+            if (change < (loser.price_change_percentage_24h || 0)) loser = coin;
+        }
+
+        // Gainer
+        document.getElementById('gainer-icon').src = gainer.image;
+        document.getElementById('gainer-icon').style.display = 'block';
+        document.getElementById('gainer-name').textContent = gainer.symbol.toUpperCase();
+        document.getElementById('gainer-change').textContent = '+' + gainer.price_change_percentage_24h.toFixed(2) + '%';
+        document.getElementById('top-gainer-card').onclick = () => openDetail(gainer.id);
+
+        // Loser
+        document.getElementById('loser-icon').src = loser.image;
+        document.getElementById('loser-icon').style.display = 'block';
+        document.getElementById('loser-name').textContent = loser.symbol.toUpperCase();
+        document.getElementById('loser-change').textContent = loser.price_change_percentage_24h.toFixed(2) + '%';
+        document.getElementById('top-loser-card').onclick = () => openDetail(loser.id);
+    }
+
+    // 2. Fear and Greed Index
+    try {
+        const fgiRes = await fetch('https://api.alternative.me/fng/');
+        const fgiData = await fgiRes.json();
+        const fgi = fgiData.data[0];
+        const val = parseInt(fgi.value);
+        
+        document.getElementById('fgi-value').textContent = val;
+        
+        let trText = "Bilinmiyor";
+        let color = "var(--text-main)";
+        
+        if (val >= 0 && val <= 24) { trText = "Aşırı Korku"; color = "var(--danger)"; }
+        else if (val >= 25 && val <= 46) { trText = "Korku"; color = "#f97316"; } // orange
+        else if (val >= 47 && val <= 54) { trText = "Nötr"; color = "#eab308"; } // yellow
+        else if (val >= 55 && val <= 74) { trText = "Açgözlülük"; color = "#84cc16"; } // lime
+        else if (val >= 75 && val <= 100) { trText = "Aşırı Açgözlülük"; color = "var(--accent)"; }
+        
+        document.getElementById('fgi-text').textContent = trText;
+        document.getElementById('fgi-value').style.color = color;
+        document.getElementById('fgi-text').style.color = color;
+    } catch(e) {
+        console.error("FGI fetch error", e);
+        document.getElementById('fgi-text').textContent = "HATA";
     }
 }
 

@@ -21,6 +21,41 @@
 
     <!-- DASHBOARD VIEW -->
     <div id="dashboard-view" class="container">
+        
+        <!-- MARKET OVERVIEW -->
+        <div class="dashboard-grid" style="margin-bottom: 3rem;">
+            <!-- Fear & Greed Card -->
+            <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                <h3 style="margin-top: 0; color: var(--text-muted); font-size: 1rem;">Korku ve Açgözlülük Endeksi</h3>
+                <div id="fgi-value" style="font-size: 3.5rem; font-weight: bold; margin: 1rem 0;">--</div>
+                <div id="fgi-text" style="font-size: 1.2rem; font-weight: bold; text-transform: uppercase;">Yükleniyor...</div>
+            </div>
+            
+            <!-- Top Gainer Card -->
+            <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: center; cursor: pointer;" id="top-gainer-card">
+                <h3 style="margin-top: 0; color: var(--text-muted); font-size: 1rem;">Günün Kazandıranı</h3>
+                <div style="display: flex; align-items: center; gap: 1rem; margin-top: 0.5rem;">
+                    <img id="gainer-icon" src="" style="width: 48px; height: 48px; border-radius: 50%; display: none;">
+                    <div>
+                        <div id="gainer-name" style="font-size: 1.5rem; font-weight: bold;">--</div>
+                        <div id="gainer-change" class="price-change positive" style="font-size: 1.2rem; font-weight:bold;">+%0.00</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Loser Card -->
+            <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: center; cursor: pointer;" id="top-loser-card">
+                <h3 style="margin-top: 0; color: var(--text-muted); font-size: 1rem;">Günün Kaybettireni</h3>
+                <div style="display: flex; align-items: center; gap: 1rem; margin-top: 0.5rem;">
+                    <img id="loser-icon" src="" style="width: 48px; height: 48px; border-radius: 50%; display: none;">
+                    <div>
+                        <div id="loser-name" style="font-size: 1.5rem; font-weight: bold;">--</div>
+                        <div id="loser-change" class="price-change negative" style="font-size: 1.2rem; font-weight:bold;">-%0.00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="section-title">Öne Çıkanlar</div>
         
         <div class="dashboard-grid" id="top-cards-container">
