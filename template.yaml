@@ -112,6 +112,11 @@ Resources:
           Properties:
             Path: /portfolio
             Method: post
+        OptionsPortfolio:
+          Type: Api
+          Properties:
+            Path: /portfolio
+            Method: options
 
   # 4. S3 Bucket for Frontend Hosting (Sitemizi barindracak Kova)
   FrontendBucket:
