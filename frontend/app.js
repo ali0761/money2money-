@@ -409,10 +409,39 @@ function checkAuth() {
 }
 
 function logout() {
-    loggedInUser = null;
-    localStorage.removeItem('m2m_user');
-    updateNav();
-    goHome();
+    const overlay = document.getElementById('logout-overlay');
+    overlay.style.display = 'flex';
+    overlay.style.opacity = '1';
+    
+    // Matrix Yagmurunu Baslat
+    document.querySelectorAll('.coin-rain').forEach(el => el.remove());
+    const symbols = ['₿', 'Ξ', '🐕', '✕', '₳', '$', 'SOL', 'PEPE', '0', '1'];
+    for (let i = 0; i < 30; i++) {
+        const drop = document.createElement('div');
+        drop.className = 'coin-rain';
+        drop.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        drop.style.left = Math.random() * 100 + 'vw';
+        drop.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        drop.style.animationDelay = (Math.random() * 0.5) + 's';
+        drop.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+        overlay.appendChild(drop);
+    }
+    
+    // Matrix bekleme süresi 3 saniyeye uzatıldı ki yavaşlayan yağmur izlenebilsin
+    setTimeout(() => {
+        loggedInUser = null;
+        localStorage.removeItem('m2m_user');
+        updateNav();
+        goHome();
+        
+        // Karartarak çıkma (Fade out)
+        overlay.style.transition = 'opacity 0.5s ease';
+        overlay.style.opacity = '0';
+        
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 500);
+    }, 3000);
 }
 
 async function submitAuth(action) {

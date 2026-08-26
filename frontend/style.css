@@ -114,7 +114,35 @@ nav h1 {
 
 .price-change { font-size: 0.85rem; font-weight: 600; }
 .price-change.positive { color: var(--accent); }
-.price-change.negative { color: var(--danger); }
+.price-change.negative {
+    color: var(--danger);
+}
+
+.blinking-cursor {
+    font-weight: bold;
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+@keyframes coinDrop {
+    0% { transform: translateY(-10vh); opacity: 0; }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.8; }
+    100% { transform: translateY(110vh); opacity: 0; }
+}
+
+.coin-rain {
+    position: absolute;
+    top: -10vh;
+    color: rgba(34, 197, 94, 0.4);
+    font-weight: bold;
+    animation: coinDrop linear forwards;
+    z-index: 9998;
+    user-select: none;
+}
 
 .mini-chart {
     height: 60px;
