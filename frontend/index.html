@@ -87,11 +87,17 @@
     <!-- PORTFOLIO VIEW -->
     <div id="portfolio-view" class="container" style="display: none;">
         <!-- Breadcrumb / Back -->
-        <div style="margin-bottom: 2rem; font-size: 0.9rem;">
-            <span style="cursor: pointer; color: var(--text-muted);" onclick="goHome()">&larr; <span style="margin: 0 0.5rem;">Ana Sayfa</span></span> > <span style="color: var(--text-main); margin-left: 0.5rem;">Cüzdanım</span>
+        <div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 0.8rem; font-size: 0.9rem;">
+            <button onclick="goHome()" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s; font-weight: bold;" onmouseover="this.style.borderColor='var(--accent)'; this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border-color)'; this.style.color='var(--text-muted)'">
+                &larr; Ana Sayfa
+            </button>
+            <span style="color: var(--text-muted);">></span>
+            <button style="background: var(--surface-color); border: 1px solid var(--accent); color: var(--accent); padding: 0.5rem 1rem; border-radius: 6px; cursor: default; font-weight: bold;">
+                <span>Cüzdanım</span>
+            </button>
         </div>
 
-        <div class="section-title">Cüzdanım</div>
+        
         
         
 
