@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Money2Money</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -172,16 +173,26 @@
                 <!-- Overview Content -->
                 <div id="content-overview">
                     <!-- Chart Filters -->
-                <div style="display: flex; justify-content: flex-end; gap: 0.25rem; margin-bottom: 1.5rem;" id="chart-time-filters">
-                    <button class="time-btn" onclick="fetchDetailChart('1')">24sa</button>
-                    <button class="time-btn active" onclick="fetchDetailChart('7')">7g</button>
-                    <button class="time-btn" onclick="fetchDetailChart('30')">1 Ay</button>
-                    <button class="time-btn" onclick="fetchDetailChart('365')">1 Yıl</button>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <!-- Chart Type Filters -->
+                    <div style="display: flex; gap: 0.25rem;" id="chart-type-filters">
+                        <button class="time-btn active" id="btn-type-line" onclick="setChartType('line')">Çizgi</button>
+                        <button class="time-btn" id="btn-type-candle" onclick="setChartType('candle')">Mum</button>
+                    </div>
+
+                    <!-- Chart Time Filters -->
+                    <div style="display: flex; justify-content: flex-end; gap: 0.25rem;" id="chart-time-filters">
+                        <button class="time-btn" onclick="fetchDetailChart('1')">24sa</button>
+                        <button class="time-btn active" onclick="fetchDetailChart('7')">7g</button>
+                        <button class="time-btn" onclick="fetchDetailChart('30')">1 Ay</button>
+                        <button class="time-btn" onclick="fetchDetailChart('365')">1 Yıl</button>
+                    </div>
                 </div>
                 
                 <div style="height: 450px; width: 100%; position: relative;">
-                    <div id="chart-loading" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--text-muted);">Grafik yükleniyor...</div>
+                    <div id="chart-loading" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--text-muted); z-index: 10;">Grafik yükleniyor...</div>
                     <canvas id="detail-main-chart"></canvas>
+                    <div id="candle-chart" style="display: none; width: 100%; height: 100%;"></div>
                 </div>
                 </div> <!-- End Overview Content -->
                 

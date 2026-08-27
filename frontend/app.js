@@ -231,25 +231,94 @@ function openDetail(coinId) {
     fetchDetailChart('7');
 }
 
+let currentChartType = 'line';
+let currentChartDays = '7';
+let candleChartInstance = null;
+
+function setChartType(type) {
+    currentChartType = type;
+    
+    // Update button states
+    document.getElementById('btn-type-line').classList.remove('active');
+    document.getElementById('btn-type-candle').classList.remove('active');
+    document.getElementById(`btn-type-${type}`).classList.add('active');
+
+    // Toggle canvas / div visibility
+    if (type === 'line') {
+        document.getElementById('detail-main-chart').style.display = 'block';
+        document.getElementById('candle-chart').style.display = 'none';
+    } else {
+        document.getElementById('detail-main-chart').style.display = 'none';
+        document.getElementById('candle-chart').style.display = 'block';
+    }
+    
+    fetchDetailChart(currentChartDays);
+}
+
 async function fetchDetailChart(days) {
     if (!currentDetailCoinId) return;
     
-    // Update button states
-    document.querySelectorAll('.time-btn').forEach(btn => btn.classList.remove('active'));
-    event && event.target && event.target.classList.add('active');
-
+    // Yalnızca zaman butonlarına tıklandıysa active sınıfını güncelle
+    if (event && event.target && event.target.parentElement && event.target.parentElement.id === 'chart-time-filters') {
+        document.querySelectorAll('#chart-time-filters .time-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+    
+    currentChartDays = days;
     document.getElementById('chart-loading').style.display = 'block';
 
     try {
-        const res = await fetch(`https://api.coingecko.com/api/v3/coins/${currentDetailCoinId}/market_chart?vs_currency=usd&days=${days}`);
-        const json = await res.json();
-        
-        renderBigChart(json.prices, currentDetailCoinId);
+        if (currentChartType === 'line') {
+            const res = await fetch(`https://api.coingecko.com/api/v3/coins/${currentDetailCoinId}/market_chart?vs_currency=usd&days=${days}`);
+            const json = await res.json();
+            renderBigChart(json.prices, currentDetailCoinId);
+        } else {
+            const res = await fetch(`https://api.coingecko.com/api/v3/coins/${currentDetailCoinId}/ohlc?vs_currency=usd&days=${days}`);
+            const ohlcData = await res.json();
+            renderCandleChart(ohlcData, currentDetailCoinId);
+        }
     } catch (e) {
         console.error(e);
     } finally {
         document.getElementById('chart-loading').style.display = 'none';
     }
+}
+
+function renderCandleChart(ohlcData, coinId) {
+    if (candleChartInstance) {
+        candleChartInstance.destroy();
+    }
+    
+    const formattedData = ohlcData.map(item => {
+        return {
+            x: new Date(item[0]),
+            y: [item[1], item[2], item[3], item[4]]
+        }
+    });
+    
+    const options = {
+        series: [{ data: formattedData }],
+        chart: {
+            type: 'candlestick',
+            height: 450,
+            background: 'transparent',
+            toolbar: { show: false }
+        },
+        theme: { mode: 'dark' },
+        plotOptions: {
+            candlestick: {
+                colors: {
+                    upward: '#22c55e',
+                    downward: '#ef4444'
+                }
+            }
+        },
+        xaxis: { type: 'datetime' },
+        yaxis: { tooltip: { enabled: true } }
+    };
+
+    candleChartInstance = new ApexCharts(document.querySelector("#candle-chart"), options);
+    candleChartInstance.render();
 }
 
 function renderBigChart(pricesArray, coinId) {
