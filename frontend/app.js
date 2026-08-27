@@ -596,7 +596,7 @@ function switchPanelTab(tab) {
     if (tab === 'demo') {
         demoTab.style.background = 'var(--surface-color)';
         demoTab.style.color = 'var(--text-main)';
-        demoTab.style.border = '2px solid var(--accent)';
+        demoTab.style.border = '2px solid var(--nav-accent)';
         
         realTab.style.background = 'transparent';
         realTab.style.color = 'var(--text-muted)';
@@ -611,7 +611,7 @@ function switchPanelTab(tab) {
         
         realTab.style.background = 'var(--surface-color)';
         realTab.style.color = 'var(--text-main)';
-        realTab.style.border = '2px solid var(--accent)';
+        realTab.style.border = '2px solid var(--nav-accent)';
         
         document.getElementById('panel-content-demo').style.display = 'none';
         document.getElementById('panel-content-real').style.display = 'block';
@@ -894,7 +894,7 @@ function switchPortTab(tab) {
     if (tab === 'demo') {
         demoTab.style.background = 'var(--surface-color)';
         demoTab.style.color = 'var(--text-main)';
-        demoTab.style.border = '2px solid var(--accent)';
+        demoTab.style.border = '2px solid var(--nav-accent)';
         
         realTab.style.background = 'transparent';
         realTab.style.color = 'var(--text-muted)';
@@ -909,7 +909,7 @@ function switchPortTab(tab) {
         
         realTab.style.background = 'var(--surface-color)';
         realTab.style.color = 'var(--text-main)';
-        realTab.style.border = '2px solid var(--accent)';
+        realTab.style.border = '2px solid var(--nav-accent)';
         
         document.getElementById('port-content-demo').style.display = 'none';
         document.getElementById('port-content-real').style.display = 'block';

@@ -11,12 +11,14 @@
 <body>
 
     <nav style="justify-content: space-between; align-items: center;">
-        <h1 onclick="goHome()" style="cursor: pointer;">M2M</h1>
+        <div style="display: flex; gap: 1.5rem; align-items: center;">
+            <h1 onclick="goHome()" style="cursor: pointer; margin: 0;">M2M</h1>
+            <span id="user-greeting" style="display: none; color: var(--accent); font-weight: bold; font-size: 1rem; opacity: 0.9;"></span>
+        </div>
         <div style="display: flex; gap: 1rem; align-items: center;">
-            <span id="user-greeting" style="display: none; color: var(--accent); font-weight: bold;"></span>
-            <button id="auth-btn" style="background: transparent; color: var(--text-main); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold;" onclick="openAuthModal()">Giriş Yap</button>
-            <button id="portfolio-btn" style="display: none; background: transparent; color: var(--text-main); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold;" onclick="openPortfolio()">Cüzdanım</button>
-            <button id="logout-btn" style="display: none; background: transparent; color: #ef4444; border: 1px solid #ef4444; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold;" onclick="logout()">Çıkış Yap</button>
+            <button id="auth-btn" style="background: transparent; color: var(--text-main); border: 1px solid var(--nav-accent); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.2s;" onmouseover="this.style.borderColor='#ffffff'; this.style.color='#ffffff'" onmouseout="this.style.borderColor='var(--nav-accent)'; this.style.color='var(--text-main)'" onclick="openAuthModal()">Giriş Yap</button>
+            <button id="portfolio-btn" style="display: none; background: transparent; color: var(--text-main); border: 1px solid var(--nav-accent); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.2s;" onmouseover="this.style.borderColor='#ffffff'; this.style.color='#ffffff'" onmouseout="this.style.borderColor='var(--nav-accent)'; this.style.color='var(--text-main)'" onclick="openPortfolio()">Cüzdanım</button>
+            <button id="logout-btn" style="display: none; background: transparent; color: var(--text-main); border: 1px solid var(--nav-accent); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--danger)'; this.style.color='var(--danger)'" onmouseout="this.style.borderColor='var(--nav-accent)'; this.style.color='var(--text-main)'" onclick="logout()">Çıkış Yap</button>
         </div>
     </nav>
 
@@ -88,11 +90,11 @@
     <div id="portfolio-view" class="container" style="display: none;">
         <!-- Breadcrumb / Back -->
         <div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 0.8rem; font-size: 0.9rem;">
-            <button onclick="goHome()" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s; font-weight: bold;" onmouseover="this.style.borderColor='var(--accent)'; this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border-color)'; this.style.color='var(--text-muted)'">
+            <button onclick="goHome()" style="background: transparent; border: 1px solid var(--nav-accent); color: var(--nav-accent); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s; font-weight: bold;" onmouseover="this.style.borderColor='#ffffff'; this.style.color='#ffffff'" onmouseout="this.style.borderColor='var(--nav-accent)'; this.style.color='var(--nav-accent)'">
                 &larr; Ana Sayfa
             </button>
             <span style="color: var(--text-muted);">></span>
-            <button style="background: var(--surface-color); border: 1px solid var(--accent); color: var(--accent); padding: 0.5rem 1rem; border-radius: 6px; cursor: default; font-weight: bold;">
+            <button style="background: var(--surface-color); border: 1px solid var(--nav-accent); color: var(--nav-accent); padding: 0.5rem 1rem; border-radius: 6px; cursor: default; font-weight: bold;">
                 <span>Cüzdanım</span>
             </button>
         </div>
@@ -103,7 +105,7 @@
 
         <!-- Demo/Real Portföy Sekmeleri -->
         <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
-            <button id="port-tab-demo" onclick="switchPortTab('demo')" style="padding: 0.8rem 1.5rem; background: var(--surface-color); color: var(--text-main); border: 2px solid var(--accent); cursor: pointer; font-weight: bold; border-radius: 8px; transition: all 0.2s;">Demo Hesap Portföyü</button>
+            <button id="port-tab-demo" onclick="switchPortTab('demo')" style="padding: 0.8rem 1.5rem; background: var(--surface-color); color: var(--text-main); border: 2px solid var(--nav-accent); cursor: pointer; font-weight: bold; border-radius: 8px; transition: all 0.2s;">Demo Hesap Portföyü</button>
             <button id="port-tab-real" onclick="switchPortTab('real')" style="padding: 0.8rem 1.5rem; background: transparent; color: var(--text-muted); border: 2px solid transparent; cursor: pointer; font-weight: bold; border-radius: 8px; transition: all 0.2s;">Gerçek Cüzdan Portföyü</button>
         </div>
 
@@ -162,14 +164,14 @@
     <div id="detail-view" class="container" style="display: none;">
         <!-- Breadcrumb / Back -->
         <div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 0.8rem; font-size: 0.9rem;">
-            <button id="breadcrumb-dashboard" onclick="goHome()" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s; font-weight: bold;" onmouseover="this.style.borderColor='var(--accent)'; this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border-color)'; this.style.color='var(--text-muted)'">
+            <button id="breadcrumb-dashboard" onclick="goHome()" style="background: transparent; border: 1px solid var(--nav-accent); color: var(--nav-accent); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s; font-weight: bold;" onmouseover="this.style.borderColor='#ffffff'; this.style.color='#ffffff'" onmouseout="this.style.borderColor='var(--nav-accent)'; this.style.color='var(--nav-accent)'">
                 &larr; Kripto Paralar
             </button>
-            <button id="breadcrumb-portfolio" onclick="openPortfolio()" style="display: none; background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; align-items: center; gap: 0.5rem; transition: all 0.2s; font-weight: bold;" onmouseover="this.style.borderColor='var(--accent)'; this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border-color)'; this.style.color='var(--text-muted)'">
+            <button id="breadcrumb-portfolio" onclick="openPortfolio()" style="display: none; background: transparent; border: 1px solid var(--nav-accent); color: var(--nav-accent); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; align-items: center; gap: 0.5rem; transition: all 0.2s; font-weight: bold;" onmouseover="this.style.borderColor='#ffffff'; this.style.color='#ffffff'" onmouseout="this.style.borderColor='var(--nav-accent)'; this.style.color='var(--nav-accent)'">
                 &larr; Cüzdanım
             </button>
             <span id="breadcrumb-separator" style="color: var(--text-muted);">></span>
-            <button style="background: var(--surface-color); border: 1px solid var(--accent); color: var(--accent); padding: 0.5rem 1rem; border-radius: 6px; cursor: default; font-weight: bold;">
+            <button style="background: var(--surface-color); border: 1px solid var(--nav-accent); color: var(--nav-accent); padding: 0.5rem 1rem; border-radius: 6px; cursor: default; font-weight: bold;">
                 <span id="detail-breadcrumb">...</span>
             </button>
         </div>
@@ -193,7 +195,7 @@
                 <!-- Interactive Tabs for Demo vs Real -->
                   <div style="border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 2rem; overflow: hidden; background: var(--bg-color);">
                       <div style="display: flex; border-bottom: 1px solid var(--border-color);">
-                          <button id="panel-tab-demo" onclick="switchPanelTab('demo')" style="flex: 1; padding: 1rem; background: var(--surface-color); color: var(--text-main); border: 2px solid var(--accent); cursor: pointer; font-weight: bold; transition: all 0.2s;">
+                          <button id="panel-tab-demo" onclick="switchPanelTab('demo')" style="flex: 1; padding: 1rem; background: var(--surface-color); color: var(--text-main); border: 2px solid var(--nav-accent); cursor: pointer; font-weight: bold; transition: all 0.2s;">
                               Demo Hesap
                           </button>
                           <button id="panel-tab-real" onclick="switchPanelTab('real')" style="flex: 1; padding: 1rem; background: transparent; color: var(--text-muted); border: 2px solid transparent; cursor: pointer; font-weight: bold; transition: all 0.2s;">

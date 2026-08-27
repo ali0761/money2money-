@@ -4,6 +4,7 @@
     --text-main: #ffffff;
     --text-muted: #94a3b8;
     --accent: #22c55e;
+    --nav-accent: #0ea5e9; /* Modern Blue for navigation */
     --accent-hover: #16a34a;
     --danger: #ef4444;
     --border-color: #1f2937;
@@ -214,8 +215,12 @@ tr:last-child td { border-bottom: none; }
     margin-bottom: -1rem;
 }
 
+.detail-tab:hover {
+    color: #EAEAEA;
+}
+
 .detail-tab.active {
-    color: var(--accent);
+    color: #EAEAEA;
     font-weight: bold;
-    border-bottom: 2px solid var(--accent);
+    border-bottom: 2px solid var(--nav-accent);
 }
