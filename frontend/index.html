@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Money2Money</title>
+    <title>M2M</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <link rel="stylesheet" href="style.css">
@@ -11,7 +11,7 @@
 <body>
 
     <nav style="justify-content: space-between; align-items: center;">
-        <h1 onclick="goHome()" style="cursor: pointer;">Money2Money</h1>
+        <h1 onclick="goHome()" style="cursor: pointer;">M2M</h1>
         <div style="display: flex; gap: 1rem; align-items: center;">
             <span id="user-greeting" style="display: none; color: var(--accent); font-weight: bold;"></span>
             <button id="auth-btn" style="background: transparent; color: var(--text-main); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold;" onclick="openAuthModal()">Giriş Yap</button>
@@ -93,17 +93,53 @@
 
         <div class="section-title">Cüzdanım</div>
         
-        <div style="background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; text-align: center;">
+        
+
+        <!-- Demo/Real Portföy Sekmeleri -->
+        <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+            <button id="port-tab-demo" onclick="switchPortTab('demo')" style="padding: 0.8rem 1.5rem; background: var(--surface-color); color: var(--text-main); border: 2px solid var(--accent); cursor: pointer; font-weight: bold; border-radius: 8px; transition: all 0.2s;">Demo Hesap Portföyü</button>
+            <button id="port-tab-real" onclick="switchPortTab('real')" style="padding: 0.8rem 1.5rem; background: transparent; color: var(--text-muted); border: 2px solid transparent; cursor: pointer; font-weight: bold; border-radius: 8px; transition: all 0.2s;">Gerçek Cüzdan Portföyü</button>
+        </div>
+
+        <div id="port-content-demo">
+            
+            <div style="background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; text-align: center;">
+            <p style="color: var(--text-muted); margin: 0 0 0.5rem 0;">Toplam Bakiye</p>
+            <h1 id="demo-total-balance" style="margin: 0; font-size: 3rem; color: var(--accent);">$0.00</h1>
+        </div>
+            
+            <div class="coin-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Varlık</th>
+                            <th>Miktarı</th>
+                            <th>Ort. Maliyet</th>
+                            <th>Güncel Fiyat</th>
+                            <th>Kâr/Zarar</th>
+                            <th>Toplam Değer</th>
+                            </tr>
+                    </thead>
+                    <tbody id="demo-table-body">
+                        <tr><td colspan="6" style="text-align:center; color: var(--text-muted);">Demo portföy yükleniyor...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="port-content-real" style="display: none;">
+            
+            <div style="background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; text-align: center;">
             <p style="color: var(--text-muted); margin: 0 0 0.5rem 0;">Toplam Bakiye</p>
             <h1 id="portfolio-total-balance" style="margin: 0; font-size: 3rem; color: var(--accent);">$0.00</h1>
         </div>
-
-        <div class="coin-table-container">
+            
+            <div class="coin-table-container">
             <table>
                 <thead>
                     <tr>
                         <th>Varlık</th>
-                        <th>Miktar</th>
+                        <th>Miktarı</th>
                         <th>Güncel Fiyat</th>
                         <th>Toplam Değer</th>
                     </tr>
@@ -114,12 +150,22 @@
             </table>
         </div>
     </div>
+    </div>
 
     <!-- DETAIL VIEW (Initially Hidden) -->
     <div id="detail-view" class="container" style="display: none;">
         <!-- Breadcrumb / Back -->
-        <div style="margin-bottom: 2rem; font-size: 0.9rem;">
-            <span style="cursor: pointer; color: var(--text-muted);" onclick="goHome()">&larr; <span style="margin: 0 0.5rem;">Kripto Paralar</span></span> > <span id="detail-breadcrumb" style="color: var(--text-main); margin-left: 0.5rem;">...</span>
+        <div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 0.8rem; font-size: 0.9rem;">
+            <button id="breadcrumb-dashboard" onclick="goHome()" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s; font-weight: bold;" onmouseover="this.style.borderColor='var(--accent)'; this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border-color)'; this.style.color='var(--text-muted)'">
+                &larr; Kripto Paralar
+            </button>
+            <button id="breadcrumb-portfolio" onclick="openPortfolio()" style="display: none; background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; align-items: center; gap: 0.5rem; transition: all 0.2s; font-weight: bold;" onmouseover="this.style.borderColor='var(--accent)'; this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border-color)'; this.style.color='var(--text-muted)'">
+                &larr; Cüzdanım
+            </button>
+            <span id="breadcrumb-separator" style="color: var(--text-muted);">></span>
+            <button style="background: var(--surface-color); border: 1px solid var(--accent); color: var(--accent); padding: 0.5rem 1rem; border-radius: 6px; cursor: default; font-weight: bold;">
+                <span id="detail-breadcrumb">...</span>
+            </button>
         </div>
         
         <div id="detail-grid" style="display: grid; grid-template-columns: 320px 1fr; gap: 2.5rem;">
@@ -138,9 +184,75 @@
                     <div id="detail-change" class="price-change positive" style="font-size: 1.1rem; margin-top: 0.5rem;">0.00% (24s)</div>
                 </div>
                 
-                <button id="add-to-portfolio-btn" onclick="promptPortfolio()" style="width: 100%; padding: 0.8rem; background: transparent; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; font-weight: bold; margin-bottom: 2rem; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#1f2937'" onmouseout="this.style.background='transparent'">
-                    Portföye Ekle / Düzenle
-                </button>
+                <!-- Interactive Tabs for Demo vs Real -->
+                  <div style="border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 2rem; overflow: hidden; background: var(--bg-color);">
+                      <div style="display: flex; border-bottom: 1px solid var(--border-color);">
+                          <button id="panel-tab-demo" onclick="switchPanelTab('demo')" style="flex: 1; padding: 1rem; background: var(--surface-color); color: var(--text-main); border: 2px solid var(--accent); cursor: pointer; font-weight: bold; transition: all 0.2s;">
+                              Demo Hesap
+                          </button>
+                          <button id="panel-tab-real" onclick="switchPanelTab('real')" style="flex: 1; padding: 1rem; background: transparent; color: var(--text-muted); border: 2px solid transparent; cursor: pointer; font-weight: bold; transition: all 0.2s;">
+                              Gerçek Portföy
+                          </button>
+                      </div>
+  
+                      <!-- Demo Panel Content -->
+                      <div id="panel-content-demo" style="padding: 1.5rem;">
+                          <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 0.9rem;">
+                              <span style="color: var(--text-muted)">Bakiye (USD):</span>
+                              <span id="trade-usd-balance" style="font-weight: bold; color: var(--text-main);">$0.00</span>
+                          </div>
+                          <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; font-size: 0.9rem;">
+                              <span style="color: var(--text-muted)">Sahip Olunan:</span>
+                              <span id="trade-coin-balance" style="font-weight: bold; color: var(--text-main);">0</span>
+                          </div>
+                          
+                          <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                              <button id="trade-tab-buy" class="time-btn active" style="flex: 1; text-align: center; color: var(--accent); border: 1px solid var(--text-main);" onclick="setTradeTab('buy')">AL</button>
+                              <button id="trade-tab-sell" class="time-btn" style="flex: 1; text-align: center; color: var(--danger); border: 1px solid transparent;" onclick="setTradeTab('sell')">SAT</button>
+                          </div>
+      
+                          <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem;">
+                              <label style="font-size: 0.85rem; color: var(--text-muted);">Miktarı (USD)</label>
+                              <input type="number" id="trade-input-usd" placeholder="0.00" style="width: 100%; padding: 0.8rem; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; font-family: monospace;" oninput="handleTradeInput('usd')">
+                          </div>
+  
+                          <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem;">
+                                <label style="font-size: 0.85rem; color: var(--text-muted);">Miktarı (COIN)</label>
+                              <input type="number" id="trade-input-coin" placeholder="0.00" style="width: 100%; padding: 0.8rem; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; font-family: monospace;" oninput="handleTradeInput('coin')">
+                          </div>
+      
+                          <button id="trade-action-btn" onclick="executeTrade()" style="width: 100%; padding: 1rem; background: var(--accent); color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; font-size: 1rem;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                              Satın Al
+                          </button>
+                      </div>
+
+                      <!-- Real Panel Content -->
+                      <div id="panel-content-real" style="padding: 1.5rem; display: none;">
+                          <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; font-size: 0.9rem;">
+                              <span style="color: var(--text-muted)">Gerçek Portföydeki Miktarı:</span>
+                              <span id="real-coin-balance" style="font-weight: bold; color: var(--text-main);">0</span>
+                          </div>
+                          
+                          <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                              <button id="real-tab-add" class="time-btn active" style="flex: 1; text-align: center; color: var(--accent); border: 1px solid var(--text-main);" onclick="setRealTab('add')">EKLE</button>
+                              <button id="real-tab-remove" class="time-btn" style="flex: 1; text-align: center; color: var(--danger); border: 1px solid transparent;" onclick="setRealTab('remove')">SİL</button>
+                          </div>
+      
+                          <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem;">
+                                <label style="font-size: 0.85rem; color: var(--text-muted);">Miktarı (USD)</label>
+                                <input type="number" id="real-input-usd" placeholder="0.00" style="width: 100%; padding: 0.8rem; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; font-family: monospace;" oninput="handleRealInput('usd')">
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem;">
+                              <label style="font-size: 0.85rem; color: var(--text-muted);">Miktarıı (COIN)</label>
+                              <input type="number" id="real-input-coin" placeholder="0.00" style="width: 100%; padding: 0.8rem; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; font-family: monospace;" oninput="handleRealInput('coin')">
+                          </div>
+      
+                          <button id="real-action-btn" onclick="executeReal()" style="width: 100%; padding: 1rem; background: var(--accent); color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; font-size: 1rem;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                              Portföye Ekle
+                          </button>
+                      </div>
+                  </div>
                 
                 <div style="display: flex; flex-direction: column;">
                     <div class="stat-row">
@@ -156,7 +268,7 @@
                         <span class="stat-value" id="stat-circ">...</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label">Toplam Arz</span>
+                        <span class="stat-label">Toplam Arzı</span>
                         <span class="stat-value" id="stat-total">...</span>
                     </div>
                 </div>

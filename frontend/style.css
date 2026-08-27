@@ -66,6 +66,7 @@ nav h1 {
     #detail-grid { grid-template-columns: 1fr !important; }
 }
 
+
 @media (max-width: 500px) {
     .dashboard-grid { grid-template-columns: 1fr; }
 }

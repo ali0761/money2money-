@@ -2,6 +2,7 @@
 let coinsData = [];
 let detailChartInstance = null;
 let currentDetailCoinId = null;
+let lastView = 'dashboard';
 
 const coinIds = "bitcoin,ethereum,solana,ripple,cardano,dogecoin,pepe,shiba-inu,chainlink,ethena,cyberconnect,arkham,hamster-kombat,notcoin,catizen";
 
@@ -192,6 +193,7 @@ function createMiniChart(canvasId, data, color, isTable) {
 
 // Detail View
 function goHome() {
+    lastView = 'dashboard';
     document.getElementById('detail-view').style.display = 'none';
     document.getElementById('portfolio-view').style.display = 'none';
     document.getElementById('dashboard-view').style.display = 'block';
@@ -206,7 +208,18 @@ function openDetail(coinId) {
     
     document.getElementById('dashboard-view').style.display = 'none';
     document.getElementById('detail-view').style.display = 'block';
+    document.getElementById('portfolio-view').style.display = 'none';
     window.scrollTo(0, 0);
+    
+    if (lastView === 'portfolio') {
+        document.getElementById('breadcrumb-portfolio').style.display = 'inline';
+        document.getElementById('breadcrumb-dashboard').style.display = 'none';
+        document.getElementById('breadcrumb-separator').style.display = 'inline';
+    } else {
+        document.getElementById('breadcrumb-portfolio').style.display = 'none';
+        document.getElementById('breadcrumb-dashboard').style.display = 'inline';
+        document.getElementById('breadcrumb-separator').style.display = 'inline';
+    }
 
     document.getElementById('detail-breadcrumb').textContent = `${coin.name} Fiyatı`;
     document.getElementById('detail-name').innerHTML = `${coin.name} <span style="background: #1f2937; font-size: 0.8rem; padding: 2px 6px; border-radius: 4px; color: var(--text-muted);">#${coin.market_cap_rank || '?'}</span>`;
@@ -227,6 +240,12 @@ function openDetail(coinId) {
     document.getElementById('stat-total').textContent = formatNumber(coin.total_supply);
 
     switchTab('overview');
+    
+    if(typeof switchPanelTab === 'function') {
+        switchPanelTab('demo');
+        setTradeTab('buy');
+    }
+    
     // Initial chart load (7 days)
     fetchDetailChart('7');
 }
@@ -439,7 +458,6 @@ async function fetchMarketsData() {
 
 // --- PORTFOLIO SYSTEM ---
 
-// LUTFEN AWS GITHUB ACTIONS CIKTISINDAKI API LINKI ILE BURAYI GUNCELLEYIN
 const API_BASE_URL = "https://po80ugrsea.execute-api.us-east-1.amazonaws.com/Prod"; 
 
 let loggedInUser = localStorage.getItem('m2m_user') || null;
@@ -449,7 +467,7 @@ function updateNav() {
     const portBtn = document.getElementById('portfolio-btn');
     const outBtn = document.getElementById('logout-btn');
     const greet = document.getElementById('user-greeting');
-    if (!authBtn) return; // if DOM not ready
+    if (!authBtn) return;
     if (loggedInUser) {
         authBtn.style.display = 'none';
         portBtn.style.display = 'inline-block';
@@ -482,7 +500,6 @@ function logout() {
     overlay.style.display = 'flex';
     overlay.style.opacity = '1';
     
-    // Matrix Yagmurunu Baslat
     document.querySelectorAll('.coin-rain').forEach(el => el.remove());
     const symbols = ['₿', 'Ξ', '🐕', '✕', '₳', 'SOL', 'PEPE', 'MATIC', 'AVAX', 'DOT', 'LINK', 'BNB', 'USDT', 'SHIB', 'TRX'];
     for (let i = 0; i < 35; i++) {
@@ -496,14 +513,12 @@ function logout() {
         overlay.appendChild(drop);
     }
     
-    // Matrix bekleme süresi 3 saniyeye uzatıldı ki yavaşlayan yağmur izlenebilsin
     setTimeout(() => {
         loggedInUser = null;
         localStorage.removeItem('m2m_user');
         updateNav();
         goHome();
         
-        // Karartarak çıkma (Fade out)
         overlay.style.transition = 'opacity 0.5s ease';
         overlay.style.opacity = '0';
         
@@ -536,7 +551,6 @@ async function submitAuth(action) {
             overlay.style.display = 'flex';
             overlay.style.opacity = '1';
 
-            // Coin Yagmurunu Baslat
             document.querySelectorAll('.binary-rain').forEach(el => el.remove());
             const symbols = ['₿', 'Ξ', '🐕', '✕', '₳', 'SOL', 'PEPE', 'MATIC', 'AVAX', 'DOT', 'LINK', 'BNB', 'USDT', 'SHIB', 'TRX'];
             for (let i = 0; i < 40; i++) {
@@ -561,7 +575,7 @@ async function submitAuth(action) {
                 setTimeout(() => {
                     overlay.style.display = 'none';
                 }, 500);
-            }, 2500); // 2.5 saniye izle
+            }, 2500);
         } else {
             alert(data.error || "Bir hata oluştu.");
         }
@@ -575,24 +589,296 @@ function openAuthModal() {
     document.getElementById('auth-modal').style.display = 'flex';
 }
 
-async function promptPortfolio() {
+function switchPanelTab(tab) {
+    const demoTab = document.getElementById('panel-tab-demo');
+    const realTab = document.getElementById('panel-tab-real');
+    
+    if (tab === 'demo') {
+        demoTab.style.background = 'var(--surface-color)';
+        demoTab.style.color = 'var(--text-main)';
+        demoTab.style.border = '2px solid var(--accent)';
+        
+        realTab.style.background = 'transparent';
+        realTab.style.color = 'var(--text-muted)';
+        realTab.style.border = '2px solid transparent';
+        
+        document.getElementById('panel-content-demo').style.display = 'block';
+        document.getElementById('panel-content-real').style.display = 'none';
+    } else {
+        demoTab.style.background = 'transparent';
+        demoTab.style.color = 'var(--text-muted)';
+        demoTab.style.border = '2px solid transparent';
+        
+        realTab.style.background = 'var(--surface-color)';
+        realTab.style.color = 'var(--text-main)';
+        realTab.style.border = '2px solid var(--accent)';
+        
+        document.getElementById('panel-content-demo').style.display = 'none';
+        document.getElementById('panel-content-real').style.display = 'block';
+        
+        updateRealPanel();
+    }
+}
+
+let currentTradeMode = 'buy';
+
+function setTradeTab(mode) {
+    currentTradeMode = mode;
+    const buyBtn = document.getElementById('trade-tab-buy');
+    const sellBtn = document.getElementById('trade-tab-sell');
+    
+    buyBtn.classList.remove('active');
+    sellBtn.classList.remove('active');
+    
+    buyBtn.style.color = 'var(--text-muted)';
+    buyBtn.style.border = '1px solid transparent';
+    sellBtn.style.color = 'var(--text-muted)';
+    sellBtn.style.border = '1px solid transparent';
+    
+    if (mode === 'buy') {
+        buyBtn.classList.add('active');
+        buyBtn.style.color = 'var(--accent)';
+        buyBtn.style.border = '1px solid var(--text-main)';
+    } else {
+        sellBtn.classList.add('active');
+        sellBtn.style.color = 'var(--danger)';
+        sellBtn.style.border = '1px solid var(--text-main)';
+    }
+    
+    document.getElementById('trade-action-btn').textContent = mode === 'buy' ? 'Satın Al' : 'Sat';
+    document.getElementById('trade-action-btn').style.background = mode === 'buy' ? 'var(--accent)' : 'var(--danger)';
+    
+    document.getElementById('trade-input-usd').value = '';
+    document.getElementById('trade-input-coin').value = '';
+}
+
+let currentRealMode = 'add';
+
+function setRealTab(mode) {
+    currentRealMode = mode;
+    const addBtn = document.getElementById('real-tab-add');
+    const removeBtn = document.getElementById('real-tab-remove');
+    const actionBtn = document.getElementById('real-action-btn');
+    
+    addBtn.classList.remove('active');
+    removeBtn.classList.remove('active');
+    
+    addBtn.style.color = 'var(--text-muted)';
+    addBtn.style.border = '1px solid transparent';
+    removeBtn.style.color = 'var(--text-muted)';
+    removeBtn.style.border = '1px solid transparent';
+    
+    if (mode === 'add') {
+        addBtn.classList.add('active');
+        addBtn.style.color = 'var(--accent)';
+        addBtn.style.border = '1px solid var(--text-main)';
+        
+        actionBtn.textContent = 'Portföye Ekle';
+        actionBtn.style.background = 'var(--accent)';
+        actionBtn.style.color = '#000';
+    } else {
+        removeBtn.classList.add('active');
+        removeBtn.style.color = 'var(--danger)';
+        removeBtn.style.border = '1px solid var(--text-main)';
+        
+        actionBtn.textContent = 'Portföyden Sil';
+        actionBtn.style.background = 'var(--danger)';
+        actionBtn.style.color = '#000';
+    }
+    
+    
+    document.getElementById('real-input-usd').value = '';
+            document.getElementById('real-input-coin').value = '';
+}
+
+function getWallet() {
+    if (!loggedInUser) return null;
+    let walletStr = localStorage.getItem(`m2m_wallet_${loggedInUser}`);
+    let wallet = null;
+    if (walletStr) {
+        try {
+            wallet = JSON.parse(walletStr);
+        } catch (e) {
+            console.error("Corrupted wallet JSON, resetting:", e);
+        }
+    }
+    if (!wallet || typeof wallet !== 'object' || typeof wallet.usd_balance === 'undefined') {
+        wallet = { usd_balance: 100000, holdings: {} };
+        saveWallet(wallet);
+    }
+    return wallet;
+}
+
+function saveWallet(wallet) {
+    if (!loggedInUser) return;
+    localStorage.setItem(`m2m_wallet_${loggedInUser}`, JSON.stringify(wallet));
+}
+
+
+function handleTradeInput(source) {
+    const coin = coinsData.find(c => c.id === currentDetailCoinId);
+    if (!coin) return;
+    const price = coin.current_price;
+    const usdInput = document.getElementById('trade-input-usd');
+    const coinInput = document.getElementById('trade-input-coin');
+
+    if (source === 'usd') {
+        const usdVal = parseFloat(usdInput.value);
+        if (!isNaN(usdVal) && usdVal > 0) {
+            coinInput.value = (usdVal / price).toFixed(6);
+        } else {
+            coinInput.value = '';
+        }
+    } else if (source === 'coin') {
+        const coinVal = parseFloat(coinInput.value);
+        if (!isNaN(coinVal) && coinVal > 0) {
+            usdInput.value = (coinVal * price).toFixed(2);
+        } else {
+            usdInput.value = '';
+        }
+    }
+}
+
+function executeTrade() {
     if (!checkAuth()) return;
-    if (!currentDetailCoinId) return;
-    const amount = prompt(`Kaç adet ${currentDetailCoinId.toUpperCase()} varlığınız var? (Sıfırlamak için 0 yazın)`);
-    if (amount === null || isNaN(amount) || amount === "") return;
+    const coin = coinsData.find(c => c.id === currentDetailCoinId);
+    if (!coin) return;
+    const currentPrice = coin.current_price;
+    const usdVal = parseFloat(document.getElementById('trade-input-usd').value);
+    const coinVal = parseFloat(document.getElementById('trade-input-coin').value);
+    
+    if (isNaN(usdVal) || usdVal <= 0 || isNaN(coinVal) || coinVal <= 0) {
+        alert("Lütfen geçerli bir miktar girin.");
+        return;
+    }
+    
+    let wallet = getWallet();
+    if (!wallet) return;
+
+    if (currentTradeMode === 'buy') {
+        if (wallet.usd_balance < usdVal) {
+            alert("Yetersiz bakiye!");
+            return;
+        }
+        wallet.usd_balance -= usdVal;
+        
+        if (!wallet.holdings[coin.id]) {
+            wallet.holdings[coin.id] = { amount: 0, avg_price: 0 };
+        }
+        
+        const hold = wallet.holdings[coin.id];
+        const totalCostBefore = hold.amount * hold.avg_price;
+        hold.amount += coinVal;
+        hold.avg_price = (totalCostBefore + usdVal) / hold.amount;
+        
+        saveWallet(wallet);
+        alert(`İşlem Başarılı! ${formatCurrency(usdVal)} karşılığında ${coinVal.toFixed(6)} ${coin.symbol.toUpperCase()} alındı.`);
+    } else {
+        const hold = wallet.holdings[coin.id];
+        if (!hold || hold.amount < coinVal) {
+            alert("Yetersiz coin bakiyesi!");
+            return;
+        }
+        
+        hold.amount -= coinVal;
+        if (hold.amount <= 0) {
+            delete wallet.holdings[coin.id];
+        }
+        
+        wallet.usd_balance += usdVal;
+        saveWallet(wallet);
+        alert(`İşlem Başarılı! ${coinVal} ${coin.symbol.toUpperCase()} satıldı ve ${formatCurrency(usdVal)} hesabınıza eklendi.`);
+    }
+    
+    document.getElementById('trade-input-usd').value = '';
+    document.getElementById('trade-input-coin').value = '';
+    document.getElementById('trade-usd-balance').textContent = formatCurrency(wallet.usd_balance);
+    const coinBal = wallet.holdings[coin.id] ? wallet.holdings[coin.id].amount : 0;
+    document.getElementById('trade-coin-balance').textContent = coinBal.toFixed(4);
+}
+
+async function updateRealPanel() {
+    if (!checkAuth()) return;
+    try {
+        const res = await fetch(`${API_BASE_URL}/portfolio?userId=${getUserId()}`);
+        if(res.ok) {
+            const data = await res.json();
+            const assets = data.assets || {};
+            let bal = 0;
+            if(currentDetailCoinId && assets[currentDetailCoinId]) {
+                bal = assets[currentDetailCoinId];
+            }
+            document.getElementById('real-coin-balance').textContent = bal.toString();
+        }
+    } catch(e) {}
+}
+
+
+function handleRealInput(source) {
+    const coin = coinsData.find(c => c.id === currentDetailCoinId);
+    if (!coin) return;
+    const price = coin.current_price;
+    const usdInput = document.getElementById('real-input-usd');
+    const coinInput = document.getElementById('real-input-coin');
+
+    if (source === 'usd') {
+        const usdVal = parseFloat(usdInput.value);
+        if (!isNaN(usdVal) && usdVal > 0) {
+            coinInput.value = (usdVal / price).toFixed(6);
+        } else {
+            coinInput.value = '';
+        }
+    } else if (source === 'coin') {
+        const coinVal = parseFloat(coinInput.value);
+        if (!isNaN(coinVal) && coinVal > 0) {
+            usdInput.value = (coinVal * price).toFixed(2);
+        } else {
+            usdInput.value = '';
+        }
+    }
+}
+
+async function executeReal() {
+    if (!checkAuth()) return;
+    const coin = coinsData.find(c => c.id === currentDetailCoinId);
+    if (!coin) return;
+    
+    const coinVal = parseFloat(document.getElementById('real-input-coin').value);
+    
+    if (isNaN(coinVal) || coinVal <= 0) {
+        alert("Lütfen geçerli bir miktar girin.");
+        return;
+    }
+    
+    const currentBal = parseFloat(document.getElementById('real-coin-balance').textContent) || 0;
+    let newBalance = currentBal;
+    
+    if (currentRealMode === 'add') {
+        newBalance += coinVal;
+    } else {
+        if (currentBal < coinVal) {
+            alert("Gerçek portföyünüzde bu kadar coin yok!");
+            return;
+        }
+        newBalance -= coinVal;
+    }
     
     try {
         const res = await fetch(`${API_BASE_URL}/portfolio`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
                 userId: getUserId(),
-                coinId: currentDetailCoinId,
-                amount: parseFloat(amount)
+                coinId: coin.id,
+                amount: newBalance
             })
         });
         if(res.ok) {
-            alert("Portföyünüz başarıyla güncellendi!");
+            alert(`Portföyünüz başarıyla güncellendi! Yeni bakiye: ${newBalance} ${coin.symbol.toUpperCase()}`);
+            document.getElementById('real-coin-balance').textContent = newBalance.toString();
+            
+            document.getElementById('real-input-usd').value = '';
+            document.getElementById('real-input-coin').value = '';
         } else {
             alert("Hata oluştu. API linkini güncellediğinizden emin olun.");
         }
@@ -601,14 +887,96 @@ async function promptPortfolio() {
     }
 }
 
+function switchPortTab(tab) {
+    const demoTab = document.getElementById('port-tab-demo');
+    const realTab = document.getElementById('port-tab-real');
+    
+    if (tab === 'demo') {
+        demoTab.style.background = 'var(--surface-color)';
+        demoTab.style.color = 'var(--text-main)';
+        demoTab.style.border = '2px solid var(--accent)';
+        
+        realTab.style.background = 'transparent';
+        realTab.style.color = 'var(--text-muted)';
+        realTab.style.border = '2px solid transparent';
+        
+        document.getElementById('port-content-demo').style.display = 'block';
+        document.getElementById('port-content-real').style.display = 'none';
+    } else {
+        demoTab.style.background = 'transparent';
+        demoTab.style.color = 'var(--text-muted)';
+        demoTab.style.border = '2px solid transparent';
+        
+        realTab.style.background = 'var(--surface-color)';
+        realTab.style.color = 'var(--text-main)';
+        realTab.style.border = '2px solid var(--accent)';
+        
+        document.getElementById('port-content-demo').style.display = 'none';
+        document.getElementById('port-content-real').style.display = 'block';
+    }
+}
+
+
+
 async function openPortfolio() {
+    if (!checkAuth()) return;
+    
+    lastView = 'portfolio';
+    
     document.getElementById('dashboard-view').style.display = 'none';
     document.getElementById('detail-view').style.display = 'none';
     document.getElementById('portfolio-view').style.display = 'block';
     
-    const tbody = document.getElementById('portfolio-table-body');
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--text-muted);">Portföy yükleniyor...</td></tr>';
-    document.getElementById('portfolio-total-balance').textContent = "Hesaplanıyor...";
+    switchPortTab('demo'); 
+    
+    const demoTbody = document.getElementById('demo-table-body');
+    const demoTbodyActual = document.getElementById('demo-table-body') || document.getElementById('demo-table');
+    const targetDemoTbody = demoTbodyActual ? demoTbodyActual : demoTbody;
+    const wallet = getWallet();
+    
+    if(document.getElementById('demo-cash-balance')) document.getElementById('demo-cash-balance').textContent = formatCurrency(wallet.usd_balance);
+    
+    const assetKeys = Object.keys(wallet.holdings);
+    if (assetKeys.length === 0) {
+        if(targetDemoTbody) targetDemoTbody.innerHTML = '<tr><td colspan="7" onclick="" style="text-align:center; color: var(--text-muted);">Demo cüzdanınız boş. Detay sayfasından coin satın alın.</td></tr>';
+        if(document.getElementById('demo-total-balance')) document.getElementById('demo-total-balance').textContent = formatCurrency(wallet.usd_balance);
+    } else {
+        let totalHoldingsValue = 0;
+        if(targetDemoTbody) targetDemoTbody.innerHTML = '';
+        for (const coinId of assetKeys) {
+            const hold = wallet.holdings[coinId];
+            const coinData = coinsData.find(c => c.id === coinId);
+            const currentPrice = coinData ? coinData.current_price : 0; 
+            const symbol = coinData ? coinData.symbol.toUpperCase() : coinId.toUpperCase();
+            
+            const value = hold.amount * currentPrice;
+            totalHoldingsValue += value;
+            
+            const costValue = hold.amount * hold.avg_price;
+            const pnl = value - costValue;
+            const pnlPercent = costValue > 0 ? (pnl / costValue) * 100 : 0;
+            const pnlClass = pnl >= 0 ? 'positive' : 'negative';
+            const pnlSign = pnl >= 0 ? '+' : '';
+            
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="font-weight: 600; text-transform: capitalize; cursor: pointer;" onclick="openDetail('${coinId}')">
+                    ${coinId} <span style="font-size: 0.8rem; color: var(--text-muted);">(${symbol})</span>
+                </td>
+                <td>${hold.amount.toFixed(4)}</td>
+                <td>${formatCurrency(hold.avg_price)}</td>
+                <td>${formatCurrency(currentPrice)}</td>
+                <td class="price-change ${pnlClass}">${pnlSign}${formatCurrency(pnl)} (${pnlSign}${pnlPercent.toFixed(2)}%)</td>
+                <td style="color: var(--accent); font-weight: bold;">${formatCurrency(value)}</td>
+                `;
+            if(targetDemoTbody) targetDemoTbody.appendChild(tr);
+        }
+        if(document.getElementById('demo-total-balance')) document.getElementById('demo-total-balance').textContent = formatCurrency(wallet.usd_balance + totalHoldingsValue);
+    }
+    
+    const realTbody = document.getElementById('portfolio-table-body');
+    if(realTbody) realTbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--text-muted);">Portföy yükleniyor...</td></tr>';
+    if(document.getElementById('portfolio-total-balance')) document.getElementById('portfolio-total-balance').textContent = "Hesaplanıyor...";
     
     try {
         const res = await fetch(`${API_BASE_URL}/portfolio?userId=${getUserId()}`);
@@ -616,39 +984,42 @@ async function openPortfolio() {
         const data = await res.json();
         
         const assets = data.assets || {};
-        const assetKeys = Object.keys(assets);
+        const realAssetKeys = Object.keys(assets);
         
-        if (assetKeys.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--text-muted);">Portföyünüz boş. Detay sayfasından coin ekleyin.</td></tr>';
-            document.getElementById('portfolio-total-balance').textContent = "$0.00";
+        if (realAssetKeys.length === 0) {
+            if(realTbody) realTbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--text-muted);">Gerçek portföyünüz boş. Detay sayfasından coin ekleyin.</td></tr>';
+            if(document.getElementById('portfolio-total-balance')) document.getElementById('portfolio-total-balance').textContent = "$0.00";
             return;
         }
         
-        let totalUsd = 0;
-        tbody.innerHTML = '';
+        let totalRealUsd = 0;
+        if(realTbody) realTbody.innerHTML = '';
         
-        for (const coinId of assetKeys) {
+        for (const coinId of realAssetKeys) {
             const amount = assets[coinId];
             const coinData = coinsData.find(c => c.id === coinId);
             const price = coinData ? coinData.current_price : 0; 
             const value = amount * price;
-            totalUsd += value;
+            totalRealUsd += value;
+            const symbol = coinData ? coinData.symbol.toUpperCase() : coinId.toUpperCase();
             
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td style="font-weight: 600; text-transform: capitalize;">${coinId}</td>
-                <td>${amount}</td>
+                <td style="font-weight: 600; text-transform: capitalize; cursor: pointer;" onclick="openDetail('${coinId}')">
+                    ${coinId} <span style="font-size: 0.8rem; color: var(--text-muted);">(${symbol})</span>
+                </td>
+                <td>${amount.toFixed(4)}</td>
                 <td>${formatCurrency(price)}</td>
                 <td style="color: var(--accent); font-weight: bold;">${formatCurrency(value)}</td>
             `;
-            tbody.appendChild(tr);
+            if(realTbody) realTbody.appendChild(tr);
         }
         
-        document.getElementById('portfolio-total-balance').textContent = formatCurrency(totalUsd);
+        if(document.getElementById('portfolio-total-balance')) document.getElementById('portfolio-total-balance').textContent = formatCurrency(totalRealUsd);
         
     } catch (e) {
         console.error(e);
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--danger);">Bağlantı hatası. app.js dosyasındaki API_BASE_URL linkini güncellediniz mi?</td></tr>';
-        document.getElementById('portfolio-total-balance').textContent = "$0.00";
+        if(realTbody) realTbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--danger);">Bağlantı hatası. app.js dosyasındaki API_BASE_URL linkini güncellediniz mi?</td></tr>';
+        if(document.getElementById('portfolio-total-balance')) document.getElementById('portfolio-total-balance').textContent = "$0.00";
     }
 }
