@@ -11,11 +11,17 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const formatCurrency = (val) => {
-    if (!val) return '$0.00';
-    if (val >= 1e12) return '$' + (val / 1e12).toFixed(2) + ' Tn';
-    if (val >= 1e9) return '$' + (val / 1e9).toFixed(2) + ' Mr';
-    if (val >= 1e6) return '$' + (val / 1e6).toFixed(2) + ' Mn';
-    if (val < 0.01) return '$' + val.toPrecision(3);
+    if (!val || Math.abs(val) < 1e-10) return '$0.00';
+    let isNeg = val < 0;
+    let absVal = Math.abs(val);
+    if (absVal >= 1e12) return (isNeg ? '-$' : '$') + (absVal / 1e12).toFixed(2) + ' Tn';
+    if (absVal >= 1e9) return (isNeg ? '-$' : '$') + (absVal / 1e9).toFixed(2) + ' Mr';
+    if (absVal >= 1e6) return (isNeg ? '-$' : '$') + (absVal / 1e6).toFixed(2) + ' Mn';
+    if (absVal < 0.01) {
+        let str = absVal.toFixed(10).replace(/0+$/, '');
+        if (str.endsWith('.')) str += '00';
+        return (isNeg ? '-$' : '$') + str;
+    }
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
 };
 
@@ -1023,3 +1029,15 @@ async function openPortfolio() {
         if(document.getElementById('portfolio-total-balance')) document.getElementById('portfolio-total-balance').textContent = "$0.00";
     }
 }
+
+window.resetDemoPortfolio = function() {
+    if(!confirm("Demo portföyünüzdeki tüm coinleri satıp bakiyenizi 100.000$ başlangıç tutarına sıfırlamak istediğinize emin misiniz?")) return;
+    
+    let wallet = {
+        usd_balance: 100000,
+        holdings: {}
+    };
+    saveWallet(wallet);
+    openPortfolio();
+    alert("Demo portföy başarıyla sıfırlandı!");
+};
